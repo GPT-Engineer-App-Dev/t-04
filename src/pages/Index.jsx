@@ -16,6 +16,8 @@ import { FaTrash } from "react-icons/fa";
 const Index = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [editIndex, setEditIndex] = useState(null);
+  const [editedTask, setEditedTask] = useState("");
 
   const addTask = () => {
     if (newTask.trim() !== "") {
@@ -36,6 +38,20 @@ const Index = () => {
     setTasks(updatedTasks);
   };
 
+  const handleEditClick = (index) => {
+    setEditIndex(index);
+    setEditedTask(tasks[index].text);
+  };
+
+  const handleSaveClick = () => {
+    const updatedTasks = tasks.map((task, i) =>
+      i === editIndex ? { ...task, text: editedTask } : task
+    );
+    setTasks(updatedTasks);
+    setEditIndex(null);
+    setEditedTask("");
+  };
+
   return (
     <Container maxW="container.md" py={10}>
       <Heading mb={6} textAlign="center">
@@ -54,23 +70,40 @@ const Index = () => {
       <VStack spacing={4} align="stretch">
         {tasks.map((task, index) => (
           <HStack key={index} spacing={4}>
-            <Checkbox
-              isChecked={task.completed}
-              onChange={() => toggleTaskCompletion(index)}
-            />
-            <Text
-              as={task.completed ? "s" : ""}
-              flex="1"
-              textDecoration={task.completed ? "line-through" : "none"}
-            >
-              {task.text}
-            </Text>
-            <IconButton
-              aria-label="Delete task"
-              icon={<FaTrash />}
-              colorScheme="red"
-              onClick={() => deleteTask(index)}
-            />
+            {editIndex === index ? (
+              <>
+                <Input
+                  value={editedTask}
+                  onChange={(e) => setEditedTask(e.target.value)}
+                />
+                <Button onClick={handleSaveClick} colorScheme="green">
+                  Save
+                </Button>
+              </>
+            ) : (
+              <>
+                <Checkbox
+                  isChecked={task.completed}
+                  onChange={() => toggleTaskCompletion(index)}
+                />
+                <Text
+                  as={task.completed ? "s" : ""}
+                  flex="1"
+                  textDecoration={task.completed ? "line-through" : "none"}
+                >
+                  {task.text}
+                </Text>
+                <Button onClick={() => handleEditClick(index)} colorScheme="blue">
+                  Edit
+                </Button>
+                <IconButton
+                  aria-label="Delete task"
+                  icon={<FaTrash />}
+                  colorScheme="red"
+                  onClick={() => deleteTask(index)}
+                />
+              </>
+            )}
           </HStack>
         ))}
       </VStack>

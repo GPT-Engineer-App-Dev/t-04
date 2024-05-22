@@ -39,7 +39,7 @@ const Index = () => {
   return (
     <Container maxW="container.md" py={10}>
       <Heading mb={6} textAlign="center">
-        Todo App
+        Procrastination List
       </Heading>
       <HStack mb={4}>
         <Input
